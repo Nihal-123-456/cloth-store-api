@@ -28,7 +28,6 @@ class ItemView(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         category = self.request.query_params.get('category')
-        discount = self.request.query_params.get('discount')
 
         color_param = self.request.query_params.get('color')
         color = color_param.split(',')if color_param else []
@@ -36,12 +35,9 @@ class ItemView(viewsets.ModelViewSet):
         size = size_param.split(',')if size_param else []
 
         average_rating = self.request.query_params.get('average_rating')
-        filter = self.request.query_params.get('filter')
         sort = self.request.query_params.get('sort')
         if category:
             queryset = queryset.filter(category__title=category)
-        if discount:
-            queryset = queryset.filter(discount=discount)
 
         if color:
             queryset = queryset.filter(color__title__in=color).distinct()
@@ -51,16 +47,18 @@ class ItemView(viewsets.ModelViewSet):
         if average_rating:
             queryset = queryset.annotate(avg_rating=Avg('reviews__rating'))
             queryset = queryset.filter(avg_rating__gte=average_rating)
-        if filter:
-            if filter == 'popularity':
-                queryset = queryset.order_by('-sales_number')
-            elif filter == 'latest':
-                queryset = queryset.order_by('-entry_date')
+
         if sort:
             if sort == 'price_low_to_high':
                 queryset = queryset.order_by('price')
             elif sort == 'price_high_to_low':
                 queryset = queryset.order_by('-price')
+            elif sort == 'popularity':
+                queryset = queryset.order_by('-sales_number')
+            elif sort == 'latest':
+                queryset = queryset.order_by('-entry_date')
+            elif sort == 'discount':
+                queryset = queryset.filter(discount=True)
         return queryset
 
 class ReviewView(viewsets.ModelViewSet):

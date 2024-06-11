@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from rest_framework import viewsets
 from .models import *
 from .serializers import *
-from rest_framework.views import APIView
+from rest_framework.views import APIView, View
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
@@ -12,7 +12,8 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework import status
 # Create your views here.
 
 class UserinfoView(viewsets.ModelViewSet):
@@ -68,8 +69,7 @@ class OrderHistoryView(viewsets.ModelViewSet):
         email.send()
     
     def send_order_status_change_email(self, instance):
-        previous_instance = OrderHistory.objects.get(id=instance.id)
-        if previous_instance.status != instance.status:
+        if instance.status == "Confirmed" or instance.status == "Delivered":
             email_subject = f'Order status updated - Order #{instance.id}'
             email_body = render_to_string('status_change_email.html', {'order': instance})
             email = EmailMultiAlternatives(email_subject, '', to=[instance.user.email])
@@ -160,6 +160,81 @@ class LogoutView(APIView):
         logout(request)
         return redirect('http://127.0.0.1:8000/user/')
 
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ChangePasswordSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            user = request.user
+            new_password = serializer.validated_data['new_password']
+            user.set_password(new_password)
+            user.save()
+
+            email_subject = f'Password changed successfully'
+            email_body = render_to_string('password_change.html', {'user': user})
+            email = EmailMultiAlternatives(email_subject, '', to=[user.email])
+            email.attach_alternative(email_body, 'text/html')
+            email.send()
+            
+            user = authenticate(username=user.username, password=new_password)
+            if user is not None:
+                login(request, user)
+                return Response({'detail': 'Password changed successfully'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'detail': 'Re-authentication failed'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ForgetPasswordView(APIView):
+    serializer_class = ForgetPasswordSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            user = User.objects.get(email=email)
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            password_reset_link = request.build_absolute_uri(f'/user/password_reset/{uid}/{token}')
+            email_subject = 'Password Reset Email'
+            email_body = render_to_string('password_reset.html', {'password_reset_link':password_reset_link})
+            email = EmailMultiAlternatives(email_subject, '', to=[email])
+            email.attach_alternative(email_body, 'text/html')
+            email.send()
+            return Response("A link has been sent your email for changing password")
+        return Response(serializer.errors)
+
+class PasswordResetView(APIView):
+    serializer_class = PasswordResetSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            uid = kwargs.get('uid')
+            token = kwargs.get('token')
+
+            try:
+                user_id = urlsafe_base64_decode(uid).decode()
+                user = User.objects.get(pk=user_id)
+            except (User.DoesNotExist, ValueError, TypeError, OverflowError):
+                user = None
+            
+            if user is not None and default_token_generator.check_token(user, token):
+                new_password = serializer.validated_data['new_password']
+                user.set_password(new_password)
+                user.save()
+
+                email_subject = f'Password changed successfully'
+                email_body = render_to_string('password_change.html', {'user': user})
+                email = EmailMultiAlternatives(email_subject, '', to=[user.email])
+                email.attach_alternative(email_body, 'text/html')
+                email.send()
+                
+                return Response("password successfully changed. please log in.")
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 

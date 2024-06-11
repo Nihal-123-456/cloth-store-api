@@ -3,6 +3,8 @@ from .models import *
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 class UserData(serializers.Serializer):
     username = serializers.CharField(read_only=True)
@@ -136,6 +138,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("An account with this email already exists")
         
         account = User(username=username, email=email, first_name=first_name, last_name=last_name)
+        try:
+            validate_password(password=password, user=account)
+        except ValidationError as err:
+            raise serializers.ValidationError({'password':err.messages})
+
         account.set_password(password)
         account.is_active = False
         account.save()
@@ -150,3 +157,44 @@ class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True)
 
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    confirm_new_password = serializers.CharField(required=True)
+
+    def validate(self, data):
+        if data['new_password'] != data['confirm_new_password']:
+            raise serializers.ValidationError({'password':"New passwords do not match."})
+        elif data['new_password'] == data['old_password']:
+            raise serializers.ValidationError({'password':"Old and new passwords are same."})
+        return data
+
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError("Old password is not correct.")
+        return value
+
+    def validate_new_password(self, value):
+        validate_password(password=value, user=self.context['request'].user)
+        return value
+
+class ForgetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    def validate_email(self, value):
+        if not User.objects.filter(email = value).exists():
+            raise serializers.ValidationError('There are no users with this email')
+        return value
+
+class PasswordResetSerializer(serializers.Serializer):
+    new_password = serializers.CharField(required=True)
+    confirm_new_password = serializers.CharField(required=True)
+
+    def validate(self, data):
+        if data['new_password'] != data['confirm_new_password']:
+            raise serializers.ValidationError({'password':"New passwords do not match."})
+        return data
+
+    def validate_new_password(self, value):
+        validate_password(password=value)
+        return value
