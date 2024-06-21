@@ -30,7 +30,10 @@ SECRET_KEY = 'django-insecure-l*0&i2pn26=w^5m(g09d2@2sy8$b0n)66%lc-vp^ina-j1xozk
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = ['https://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.127.0.0.1',
+    'https://knasn12345.pythonanywhere.com'
+]
 CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
