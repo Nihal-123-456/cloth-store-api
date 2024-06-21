@@ -1,1 +1,0 @@
-web: gunicorn cloth_store_api.wsgi --log-file -
