@@ -32,7 +32,8 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = [
     'https://*.127.0.0.1',
-    'https://knasn12345.pythonanywhere.com'
+    'https://knasn12345.pythonanywhere.com',
+    'https://web-production-e6f6.up.railway.app',
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 
