@@ -114,7 +114,7 @@ class RegistrationView(APIView):
             user = serializer.save()
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            confirm_link = f'http://127.0.0.1:8000/user/active/{uid}/{token}'
+            confirm_link = request.build_absolute_uri(f'/user/active/{uid}/{token}') 
             email_subject = 'Confirmation Email'
             email_body = render_to_string('confirm_email.html', {'confirm_link':confirm_link} )
             email = EmailMultiAlternatives(email_subject, '', to=[user.email])
@@ -133,9 +133,9 @@ def activate(self, uid64, token):
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        return redirect('http://127.0.0.1:8000/user/')
+        return redirect('https://cloth-store-api.onrender.com/user/')
     else:
-        return redirect('http://127.0.0.1:8000/user/')
+        return redirect('https://cloth-store-api.onrender.com/user/')
 
 class LoginView(APIView):
     serializer_class = LoginSerializer
