@@ -25,7 +25,7 @@ class UserinfoView(viewsets.ModelViewSet):
         queryset = super().get_queryset()
         user = self.request.query_params.get('user')
         if user:
-            queryset = queryset.filter(user__username = user)
+            queryset = queryset.filter(user = user)
         return queryset
 
 class WishlistItemView(viewsets.ModelViewSet):
@@ -37,7 +37,7 @@ class WishlistItemView(viewsets.ModelViewSet):
         queryset = super().get_queryset()
         user = self.request.query_params.get('user')
         if user:
-            queryset = queryset.filter(user__username = user)
+            queryset = queryset.filter(user = user)
         return queryset
 
 class OrderHistoryView(viewsets.ModelViewSet):
@@ -49,7 +49,7 @@ class OrderHistoryView(viewsets.ModelViewSet):
         queryset = super().get_queryset()
         user = self.request.query_params.get('user')
         if user:
-            queryset = queryset.filter(user__username = user)
+            queryset = queryset.filter(user = user)
         return queryset
     
     def perform_create(self, serializer):
@@ -90,7 +90,7 @@ class CartView(viewsets.ModelViewSet):
         queryset = super().get_queryset()
         user = self.request.query_params.get('user')
         if user:
-            queryset = queryset.filter(user__username=user)
+            queryset = queryset.filter(user=user)
         return queryset
 
 class CartItemView(viewsets.ModelViewSet):
@@ -102,7 +102,7 @@ class CartItemView(viewsets.ModelViewSet):
         queryset = super().get_queryset()
         cart = self.request.query_params.get('cart')
         if cart:
-            queryset = queryset.filter(cart__user__username=cart)
+            queryset = queryset.filter(cart__user=cart)
         return queryset
 
 class RegistrationView(APIView):

@@ -72,9 +72,9 @@ class ReviewView(viewsets.ModelViewSet):
         item = self.request.query_params.get('item')
         rating = self.request.query_params.get('rating')
         if user:
-            queryset = queryset.filter(user__username = user)
+            queryset = queryset.filter(user = user)
         elif item:
-            queryset = queryset.filter(item__title=item)
+            queryset = queryset.filter(item = item)
         elif rating:
             queryset = queryset.filter(rating=rating)
         return queryset
