@@ -158,7 +158,7 @@ class LogoutView(APIView):
     def get(self, request):
         request.user.auth_token.delete()
         logout(request)
-        return redirect('http://127.0.0.1:8000/user/')
+        return redirect(request.build_absolute_uri('/user'))
 
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
