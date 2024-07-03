@@ -108,6 +108,7 @@ class CartSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user', read_only=True)
     cart_items = CartItemReadSerializer(many=True, read_only=True)
     total_payment = serializers.IntegerField(read_only=True)
+    total_quantity = serializers.IntegerField(read_only=True)
     class Meta:
         model = Cart
         fields = '__all__'

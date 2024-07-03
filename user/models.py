@@ -56,6 +56,12 @@ class Cart(models.Model):
             else:
                 total_price += cart_item.item.price * cart_item.quantity
         return total_price
+    def total_quantity(self):
+        total_quantity = 0
+        cart_items = self.cart_items.all()
+        for item in cart_items:
+            total_quantity += item.quantity
+        return total_quantity
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cart_items')
