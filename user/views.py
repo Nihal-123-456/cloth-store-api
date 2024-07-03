@@ -120,7 +120,7 @@ class RegistrationView(APIView):
             email = EmailMultiAlternatives(email_subject, '', to=[user.email])
             email.attach_alternative(email_body, 'text/html')
             email.send()
-            return Response('Check your email for confirmation link')
+            return Response({'confirmation':"Check your email for confirmation"})
         return Response(serializer.errors)
 
 def activate(self, uid64, token):
