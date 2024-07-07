@@ -133,9 +133,9 @@ def activate(self, uid64, token):
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        return redirect('http://127.0.0.1:5500/login.html?referrer=activation')
+        return redirect(f'http://127.0.0.1:5500/login.html?referrer=activation')
     else:
-        return redirect('http://127.0.0.1:5500/login.html?referrer=activation')
+        return redirect('http://127.0.0.1:5500/login.html')
 
 class LoginView(APIView):
     serializer_class = LoginSerializer
@@ -197,13 +197,13 @@ class ForgetPasswordView(APIView):
             user = User.objects.get(email=email)
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            password_reset_link = request.build_absolute_uri(f'/user/password_reset/{uid}/{token}')
+            password_reset_link = f'http://127.0.0.1:5500/password_recover.html?referrer=password_reset&token={token}&uid={uid}'
             email_subject = 'Password Reset Email'
             email_body = render_to_string('password_reset.html', {'password_reset_link':password_reset_link})
             email = EmailMultiAlternatives(email_subject, '', to=[email])
             email.attach_alternative(email_body, 'text/html')
             email.send()
-            return Response({'link':password_reset_link, 'uid':uid, 'token':token})
+            return Response('A link has been sent to your email.')
         return Response(serializer.errors)
 
 class PasswordResetView(APIView):
