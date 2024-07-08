@@ -55,11 +55,11 @@ class OrderHistoryView(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         instance = serializer.save()
         self.send_order_confirmation_email(instance)
-        self.update_sales_number(instance)
     
     def perform_update(self, serializer):
         instance = serializer.save()
         self.send_order_status_change_email(instance)
+        self.update_sales_number(instance)
 
     def send_order_confirmation_email(self, instance):
         email_subject = f'Order Confirmation - Order #{instance.id}'
@@ -77,9 +77,11 @@ class OrderHistoryView(viewsets.ModelViewSet):
             email.send()
 
     def update_sales_number(self, instance):
-        item = instance.item
-        item.sales_number += instance.quantity
-        item.save()   
+        if instance.status == "Delivered":
+            item = instance.item
+            item.sales_number += instance.quantity
+            item.quantity_available -= instance.quantity
+            item.save()   
 
 class CartView(viewsets.ModelViewSet):
     queryset = Cart.objects.all()

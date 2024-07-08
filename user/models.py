@@ -67,6 +67,8 @@ class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cart_items')
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    color = models.CharField(max_length=255, null=True, blank=True)
+    size = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return f'{self.cart.user.first_name} {self.cart.user.last_name} has added {self.item.title} to their cart'

@@ -34,6 +34,7 @@ class Item(models.Model):
     size = models.ManyToManyField(Size)
     sales_number = models.PositiveIntegerField(default=0)
     entry_date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    quantity_available = models.PositiveIntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.title

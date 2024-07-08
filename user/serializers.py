@@ -71,7 +71,7 @@ class CartItemReadSerializer(serializers.ModelSerializer):
     item_price = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = CartItem
-        fields = ['item_name', 'item_image', 'quantity', 'item_price']
+        fields = ['item_name', 'item_image', 'quantity', 'item_price', 'size', 'color']
     
     def get_item_image(self, instance):
         request = self.context.get('request')
@@ -90,10 +90,23 @@ class CartItemSerializer(serializers.ModelSerializer):
         model = CartItem
         fields = '__all__'
     
+    def validate(self, data):
+        item = data.get('item')
+        color = data.get('color')
+        size = data.get('size')
+
+        if color and not item.color.filter(title=color).exists():
+            raise serializers.ValidationError(f'{color} color not available for this product.')
+        if size and not item.size.filter(title=size).exists():
+            raise serializers.ValidationError(f'{size} size not available for this product')
+        return data
+    
     def create(self, validated_data):
         cart = validated_data['cart']
         item = validated_data['item']
         quantity = validated_data['quantity']
+        color = validated_data['color']
+        size = validated_data['size']
 
         existing_item = CartItem.objects.filter(cart=cart, item=item).first()
         if existing_item:
@@ -101,8 +114,8 @@ class CartItemSerializer(serializers.ModelSerializer):
             existing_item.save()
             return existing_item
             
-        new_item = CartItem.objects.create(cart=cart, item=item, quantity=quantity)
-        return new_item
+        new_item = CartItem.objects.create(cart=cart, item=item, quantity=quantity, color=color, size=size)
+        return new_item 
 
 class CartSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user', read_only=True)
