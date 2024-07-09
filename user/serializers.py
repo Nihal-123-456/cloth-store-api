@@ -72,7 +72,7 @@ class CartItemReadSerializer(serializers.ModelSerializer):
     quantity_available = serializers.IntegerField(source='item.quantity_available', read_only=True)
     class Meta:
         model = CartItem
-        fields = ['item_name', 'item_image', 'quantity', 'item_price', 'size', 'color', 'quantity_available']
+        fields = ['id','item_name', 'item_image', 'quantity', 'item_price', 'size', 'color', 'quantity_available']
     
     def get_item_image(self, instance):
         request = self.context.get('request')
