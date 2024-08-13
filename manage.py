@@ -3,7 +3,7 @@
 import os
 import sys
 
-
+PORT = os.environ.get('PORT', '8000')
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cloth_store_api.settings')
