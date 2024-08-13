@@ -30,6 +30,7 @@ class OrderHistory(models.Model):
     color = models.CharField(max_length=255, null=True, blank=True)
     size = models.CharField(max_length=255, null=True, blank=True)
     status = models.CharField(choices=ORDER_STATUS,max_length=255, null=True, blank=True)
+    order_date = models.DateField(null=True, blank=True, auto_now_add=True)
 
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name} ordered {self.item.title}'

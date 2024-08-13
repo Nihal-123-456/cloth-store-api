@@ -15,4 +15,9 @@ class Migration(migrations.Migration):
             name='description',
             field=models.TextField(blank=True, null=True),
         ),
+        migrations.AddField(
+            model_name='item',
+            name='quantity_available',
+            field=models.PositiveIntegerField(blank=True, null=True),
+        ),
     ]
