@@ -16,7 +16,7 @@ def main():
         ) from exc
     port = os.environ.get('PORT')
     if port:
-        sys.argv += ["runserver", f"0.0.0.0:{port}"]
+        sys.argv += [f"0.0.0.0:{port}"]
     execute_from_command_line(sys.argv)
 
 
