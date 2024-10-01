@@ -1,5 +1,6 @@
 from rest_framework.routers import DefaultRouter
 from .views import *
+from django.urls import path, include
 
 router = DefaultRouter()
 router.register('color', ColorView)
@@ -8,5 +9,8 @@ router.register('category', CategoryView)
 router.register('item', ItemView)
 router.register('review', ReviewView)
 
-urlpatterns = router.urls
+urlpatterns = [
+    path('', include(router.urls)),
+    path('paymentgateway/<int:uid>', paymentgateway_view, name='paymentgateway')
+]
 
