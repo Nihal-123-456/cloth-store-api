@@ -7,6 +7,7 @@ from sslcommerz_lib import SSLCOMMERZ
 from django.contrib.auth.models import User
 from user.models import Cart,Userinfo
 import uuid
+from django.http import JsonResponse
 # Create your views here.
 
 class CategoryView(viewsets.ModelViewSet):
@@ -123,4 +124,4 @@ def paymentgateway_view(request, uid):
 
 
     response = sslcz.createSession(post_body)
-    return redirect(response['GatewayPageURL'])
+    return JsonResponse({'payment_url': response['GatewayPageURL']})
