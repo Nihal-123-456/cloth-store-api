@@ -5,7 +5,7 @@ from .serializers import *
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from sslcommerz_lib import SSLCOMMERZ 
 from django.contrib.auth.models import User
-from user.models import Cart,Userinfo
+from user.models import Cart,Userinfo,OrderHistory,CartItem
 import uuid
 from django.http import JsonResponse
 # Create your views here.
@@ -105,7 +105,7 @@ def paymentgateway_view(request, uid):
     post_body['total_amount'] = cart.total_payment()
     post_body['currency'] = "BDT"
     post_body['tran_id'] = generate_transaction_id()
-    post_body['success_url'] = "http://127.0.0.1:8000/product/"
+    post_body['success_url'] = "http://127.0.0.1:8000/product/paymentsuccess/{uid}"
     post_body['fail_url'] = "http://127.0.0.1:8000/product/"
     post_body['cancel_url'] = "http://127.0.0.1:8000/product/"
     post_body['emi_option'] = 0
@@ -125,3 +125,20 @@ def paymentgateway_view(request, uid):
 
     response = sslcz.createSession(post_body)
     return JsonResponse({'payment_url': response['GatewayPageURL']})
+
+def paymentsuccess_view(request, uid):
+    user = User.objects.get(id=uid)
+    cart = Cart.objects.get(user=uid)
+    cart_items = CartItem.objects.filter(cart=cart)
+
+    for cart_item in cart_items:
+        order = OrderHistory.objects.create(user=user, item=cart_item.item, quantity=cart_item.quantity,color=cart_item.color, size=cart_item.size, status = 'Pending')
+        order.save()
+    cart_items.delete()
+    return redirect('http://127.0.0.1:5500/profile.html#orders')
+    
+
+    
+
+    
+

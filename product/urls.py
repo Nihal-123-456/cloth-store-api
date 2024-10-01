@@ -11,6 +11,7 @@ router.register('review', ReviewView)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('paymentgateway/<int:uid>', paymentgateway_view, name='paymentgateway')
+    path('paymentgateway/<int:uid>', paymentgateway_view, name='paymentgateway'),
+    path('paymentsuccess/<int:uid>', paymentsuccess_view, name='paymentsuccess'),
 ]
 
