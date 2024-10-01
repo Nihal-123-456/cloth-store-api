@@ -86,6 +86,14 @@ class ReviewView(viewsets.ModelViewSet):
 def generate_transaction_id():
     return str(uuid.uuid4())
 
+def get_cart_products(uid):
+    cart = Cart.objects.get(user=uid)
+    cart_products = cart.cart_items.all()
+    products = ''
+    for p in cart_products:
+        products += f'{p.item.title},'
+    return products  
+
 def paymentgateway_view(request, uid):
     user = User.objects.get(id=uid)
     user_info = Userinfo.objects.get(user=uid)
@@ -104,13 +112,13 @@ def paymentgateway_view(request, uid):
     post_body['cus_email'] = user.email
     post_body['cus_phone'] = user_info.contact_number
     post_body['cus_add1'] = user_info.street_address
-    post_body['cus_city'] = "Dhaka"
-    post_body['cus_country'] = "Bangladesh"
+    post_body['cus_city'] = ""
+    post_body['cus_country'] = ""
     post_body['shipping_method'] = "NO"
     post_body['multi_card_name'] = ""
     post_body['num_of_item'] = cart.cart_items.count()
-    post_body['product_name'] = "Test"
-    post_body['product_category'] = "Test Category"
+    post_body['product_name'] = get_cart_products(uid)
+    post_body['product_category'] = "general"
     post_body['product_profile'] = "general"
 
 
