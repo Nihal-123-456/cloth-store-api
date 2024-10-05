@@ -142,6 +142,17 @@ def paymentsuccess_view(request, uid):
         order.save()
     cart_items.delete()
     return redirect('http://127.0.0.1:5500/profile.html#orders')
+
+def paymentfailure_view(request, uid):
+    user = User.objects.get(id=uid)
+    cart = Cart.objects.get(user=uid)
+    cart_items = CartItem.objects.filter(cart=cart)
+
+    for cart_item in cart_items:
+        order = OrderHistory.objects.create(user=user, item=cart_item.item, quantity=cart_item.quantity,color=cart_item.color, size=cart_item.size, status = 'Pending')
+        order.save()
+        cart_item.delete()
+    return redirect('http://127.0.0.1:5500/profile.html#orders')
     
 
     
