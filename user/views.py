@@ -51,37 +51,6 @@ class OrderHistoryView(viewsets.ModelViewSet):
         if user:
             queryset = queryset.filter(user = user)
         return queryset
-    
-    def perform_create(self, serializer):
-        instance = serializer.save()
-        self.send_order_confirmation_email(instance)
-    
-    def perform_update(self, serializer):
-        instance = serializer.save()
-        self.send_order_status_change_email(instance)
-        self.update_sales_number(instance)
-
-    def send_order_confirmation_email(self, instance):
-        email_subject = f'Order Confirmation - Order #{instance.id}'
-        email_body = render_to_string('order_email.html', {'order': instance})
-        email = EmailMultiAlternatives(email_subject, '', to=[instance.user.email])
-        email.attach_alternative(email_body, 'text/html')
-        email.send()
-    
-    def send_order_status_change_email(self, instance):
-        if instance.status == "Confirmed" or instance.status == "Delivered":
-            email_subject = f'Order status updated - Order #{instance.id}'
-            email_body = render_to_string('status_change_email.html', {'order': instance})
-            email = EmailMultiAlternatives(email_subject, '', to=[instance.user.email])
-            email.attach_alternative(email_body, 'text/html')
-            email.send()
-
-    def update_sales_number(self, instance):
-        if instance.status == "Delivered":
-            item = instance.item
-            item.sales_number += instance.quantity
-            item.quantity_available -= instance.quantity
-            item.save()   
 
 class CartView(viewsets.ModelViewSet):
     queryset = Cart.objects.all()

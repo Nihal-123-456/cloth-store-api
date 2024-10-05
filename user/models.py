@@ -2,6 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 from product.models import Item
 from django.core.validators import MinValueValidator
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 # Create your models here.
 
 class Userinfo(models.Model):
@@ -41,6 +45,23 @@ class OrderHistory(models.Model):
         else:
             total_price += self.item.price * self.quantity
         return total_price
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old_status = OrderHistory.objects.get(pk=self.pk).status
+            if old_status != self.status:
+                if self.status == "Delivered":
+                    item = self.item
+                    item.sales_number += self.quantity
+                    item.quantity_available -= self.quantity
+                    item.save()
+                self.send_status_change_email()
+        super(OrderHistory, self).save(*args, **kwargs)
+    def send_status_change_email(self):
+        email_subject = f'Order status updated - Order #{self.id}'
+        email_body = render_to_string('status_change_email.html', {'order': self})
+        email = EmailMultiAlternatives(email_subject, '', to=[self.user.email])
+        email.attach_alternative(email_body, 'text/html')
+        email.send()
 
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -74,4 +95,11 @@ class CartItem(models.Model):
     def __str__(self):
         return f'{self.cart.user.first_name} {self.cart.user.last_name} has added {self.item.title} to their cart'
 
-    
+@receiver(post_save, sender=OrderHistory)
+def send_order_confirmation_email(sender, instance, created, **kwargs):
+    if created:
+        email_subject = f'Order Confirmation - Order #{instance.id}'
+        email_body = render_to_string('order_email.html', {'order': instance})
+        email = EmailMultiAlternatives(email_subject, '', to=[instance.user.email])
+        email.attach_alternative(email_body, 'text/html')
+        email.send()

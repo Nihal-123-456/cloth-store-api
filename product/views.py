@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 from user.models import Cart,Userinfo,OrderHistory,CartItem
 import uuid
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import login, logout, authenticate
 # Create your views here.
 
 class CategoryView(viewsets.ModelViewSet):
@@ -105,7 +107,7 @@ def paymentgateway_view(request, uid):
     post_body['total_amount'] = cart.total_payment()
     post_body['currency'] = "BDT"
     post_body['tran_id'] = generate_transaction_id()
-    post_body['success_url'] = "http://127.0.0.1:8000/product/paymentsuccess/{uid}"
+    post_body['success_url'] = request.build_absolute_uri(f'/product/paymentsuccess/{uid}')
     post_body['fail_url'] = "http://127.0.0.1:8000/product/"
     post_body['cancel_url'] = "http://127.0.0.1:8000/product/"
     post_body['emi_option'] = 0
@@ -124,8 +126,10 @@ def paymentgateway_view(request, uid):
 
 
     response = sslcz.createSession(post_body)
+    # return redirect(response['GatewayPageURL'])
     return JsonResponse({'payment_url': response['GatewayPageURL']})
 
+@csrf_exempt
 def paymentsuccess_view(request, uid):
     user = User.objects.get(id=uid)
     cart = Cart.objects.get(user=uid)
@@ -135,6 +139,7 @@ def paymentsuccess_view(request, uid):
         order = OrderHistory.objects.create(user=user, item=cart_item.item, quantity=cart_item.quantity,color=cart_item.color, size=cart_item.size, status = 'Pending')
         order.save()
     cart_items.delete()
+    login(request,user)
     return redirect('http://127.0.0.1:5500/profile.html#orders')
     
 
