@@ -10,6 +10,8 @@ import uuid
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login, logout, authenticate
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import get_backends
 # Create your views here.
 
 class CategoryView(viewsets.ModelViewSet):
@@ -126,8 +128,8 @@ def paymentgateway_view(request, uid):
 
 
     response = sslcz.createSession(post_body)
-    # return redirect(response['GatewayPageURL'])
-    return JsonResponse({'payment_url': response['GatewayPageURL']})
+    return redirect(response['GatewayPageURL'])
+    # return JsonResponse({'payment_url': response['GatewayPageURL']})
 
 @csrf_exempt
 def paymentsuccess_view(request, uid):
@@ -139,7 +141,6 @@ def paymentsuccess_view(request, uid):
         order = OrderHistory.objects.create(user=user, item=cart_item.item, quantity=cart_item.quantity,color=cart_item.color, size=cart_item.size, status = 'Pending')
         order.save()
     cart_items.delete()
-    login(request,user)
     return redirect('http://127.0.0.1:5500/profile.html#orders')
     
 
