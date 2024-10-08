@@ -128,10 +128,9 @@ def paymentgateway_view(request, uid):
 
 
     response = sslcz.createSession(post_body)
-    return redirect(response['GatewayPageURL'])
-    # return JsonResponse({'payment_url': response['GatewayPageURL']})
+    # return redirect(response['GatewayPageURL'])
+    return JsonResponse({'payment_url': response['GatewayPageURL']})
 
-@csrf_exempt
 def paymentsuccess_view(request, uid):
     user = User.objects.get(id=uid)
     cart = Cart.objects.get(user=uid)
@@ -143,7 +142,6 @@ def paymentsuccess_view(request, uid):
     cart_items.delete()
     return redirect('http://127.0.0.1:5500/profile.html#orders')
 
-@csrf_exempt
 def paymentfailure_view(request):
     return redirect('http://127.0.0.1:5500/cart.html?order=failed')
     

@@ -30,12 +30,17 @@ SECRET_KEY = 'django-insecure-l*0&i2pn26=w^5m(g09d2@2sy8$b0n)66%lc-vp^ina-j1xozk
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-CSRF_ALLOWED_ORIGINS = [
+CORS_ALLOWED_ORIGINS = [
     'https://*.127.0.0.1',
     'https://cloth-store-api.onrender.com',
     'http://127.0.0.1:5500/'
 ]
 CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.127.0.0.1',
+    'https://cloth-store-api.onrender.com',
+    'http://127.0.0.1:5500/'
+]
 
 # Application definition
 
