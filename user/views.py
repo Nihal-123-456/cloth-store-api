@@ -130,7 +130,7 @@ class LogoutView(APIView):
     def post(self, request):
         request.user.auth_token.delete()
         logout(request)
-        return redirect(request.build_absolute_uri('/user'))
+        return Response({"message": "Successfully logged out"}, status=200)
 
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
