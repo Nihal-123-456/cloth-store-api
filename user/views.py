@@ -207,6 +207,11 @@ class PasswordResetView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class TokenObjectsView(APIView):
+    def get(self, request):
+        tokens = Token.objects.all()
+        serializer = TokenSerializer(tokens, many=True) 
+        return Response({'tokens': serializer.data})
 
 
 

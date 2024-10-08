@@ -18,4 +18,5 @@ urlpatterns = [
     path('change_password/', ChangePasswordView.as_view(), name='change_password'),
     path('forget_password/', ForgetPasswordView.as_view(), name='forget_password'),
     path('password_reset/<uid>/<token>', PasswordResetView.as_view(), name='password_reset'),
+    path('token_view', TokenObjectsView.as_view(), name='token_view'),
 ]

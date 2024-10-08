@@ -5,6 +5,7 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from rest_framework.authtoken.models import Token
 
 class UserData(serializers.Serializer):
     username = serializers.CharField(read_only=True)
@@ -214,3 +215,8 @@ class PasswordResetSerializer(serializers.Serializer):
     def validate_new_password(self, value):
         validate_password(password=value)
         return value
+
+class TokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Token
+        fields = ['key', 'user']
