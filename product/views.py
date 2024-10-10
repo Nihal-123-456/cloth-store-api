@@ -111,7 +111,7 @@ def paymentgateway_view(request, uid):
     post_body['tran_id'] = generate_transaction_id()
     post_body['success_url'] = request.build_absolute_uri(f'/product/paymentsuccess/{uid}')
     post_body['fail_url'] = request.build_absolute_uri('/product/paymentfailure/')
-    post_body['cancel_url'] = "http://127.0.0.1:8000/product/"
+    post_body['cancel_url'] = request.build_absolute_uri('/product/paymentfailure/')
     post_body['emi_option'] = 0
     post_body['cus_name'] = f"{user.first_name} {user.last_name}"
     post_body['cus_email'] = user.email
