@@ -140,11 +140,11 @@ def paymentsuccess_view(request, uid):
         order = OrderHistory.objects.create(user=user, item=cart_item.item, quantity=cart_item.quantity,color=cart_item.color, size=cart_item.size, status = 'Pending')
         order.save()
     cart_items.delete()
-    return redirect('http://127.0.0.1:5500/profile.html#orders')
+    return redirect('https://nihal-123-456.github.io/Cloth-store-front-end/profile.html#orders')
 
 @csrf_exempt
 def paymentfailure_view(request):
-    return redirect('http://127.0.0.1:5500/cart.html?order=failed')
+    return redirect('https://nihal-123-456.github.io/Cloth-store-front-end/cart.html?order=failed')
     
 
     
