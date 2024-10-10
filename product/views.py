@@ -128,7 +128,7 @@ def paymentgateway_view(request, uid):
 
 
     response = sslcz.createSession(post_body)
-    return redirect(response['GatewayPageURL'])
+    return JsonResponse({'payment_url': response['GatewayPageURL']})
 
 @csrf_exempt
 def paymentsuccess_view(request, uid):
