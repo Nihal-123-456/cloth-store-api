@@ -30,7 +30,7 @@ mss
 numpy
 opencv-contrib-python
 packaging
-Pillow
+pillow
 pipenv
 platformdirs
 prompt_toolkit
@@ -47,6 +47,7 @@ pytweening
 pytz
 redis
 requests
+setuptools
 six
 sqlparse
 sslcommerz-lib
