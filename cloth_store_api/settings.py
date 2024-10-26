@@ -36,8 +36,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://cloth-store-api.onrender.com',
     'https://sslcommerz.com',  
     'https://sandbox.sslcommerz.com',  
-    'https://nihal-123-456.github.io/Cloth-store-front-end/',
-    'https://cloth-store-api-production.up.railway.app/'
+    'https://nihal-123-456.github.io/Cloth-store-front-end',
+    'https://cloth-store-api-production.up.railway.app'
 ]
 
 # Application definition
