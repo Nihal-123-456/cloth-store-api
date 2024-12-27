@@ -23,7 +23,7 @@ COPY requirements.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt
 
 # Copy the Django project code into the container
-COPY ./src /code
+COPY . /code
 
 # Set project name as a build argument
 ARG PROJ_NAME="cloth_store_api"
