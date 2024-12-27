@@ -126,7 +126,7 @@ class LoginView(APIView):
         return Response(serializer.errors)
 
 class LogoutView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         request.user.auth_token.delete()
         logout(request)

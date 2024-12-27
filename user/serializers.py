@@ -23,6 +23,11 @@ class WishlistItemSerializer(serializers.ModelSerializer):
     buyer_name = serializers.CharField(source='user', read_only = True)
     item_name = serializers.CharField(source='item', read_only = True)
     item_image = serializers.SerializerMethodField(read_only=True)
+    item_id = serializers.IntegerField(source="item.id", read_only=True)
+    item_price = serializers.IntegerField(source="item.price", read_only=True)
+    item_discount = serializers.BooleanField(source="item.discount", read_only=True)
+    item_discount_percentage = serializers.IntegerField(source="item.discount_percentage", read_only=True)
+    item_discount_price = serializers.IntegerField(source="item.discount_price", read_only=True)
     class Meta:
         model = WishlistItem
         fields = '__all__'
@@ -39,6 +44,13 @@ class WishlistItemSerializer(serializers.ModelSerializer):
         if qs.exists():
             raise serializers.ValidationError(f"{value} already exists in your wishlist")
         return value
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if not data.get('item_discount'):
+            data.pop('item_discount_percentage', None)
+            data.pop('item_discount_price', None)
+        return data
 
 class OrderHistorySerializer(serializers.ModelSerializer):
     buyer_name = serializers.CharField(source='user', read_only = True)
