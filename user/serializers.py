@@ -39,11 +39,14 @@ class WishlistItemSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(first_image.image.url)
         return None
     
-    def validate_item(self, value):
-        qs = WishlistItem.objects.filter(item=value)
+    def create(self, validated_data):
+        user = validated_data['user']
+        item = validated_data['item']
+        qs = WishlistItem.objects.filter(user=user, item=item)
         if qs.exists():
-            raise serializers.ValidationError(f"{value} already exists in your wishlist")
-        return value
+            raise serializers.ValidationError(f"{item} already exists in your wishlist")
+        new_wishlist = WishlistItem.objects.create(user=user, item=item)
+        return new_wishlist
     
     def to_representation(self, instance):
         data = super().to_representation(instance)
