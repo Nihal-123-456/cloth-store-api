@@ -12,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login, logout, authenticate
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_backends
+from rest_framework.response import Response
 # Create your views here.
 
 class CategoryView(viewsets.ModelViewSet):
@@ -87,6 +88,16 @@ class ReviewView(viewsets.ModelViewSet):
         elif rating:
             queryset = queryset.filter(rating=rating)
         return queryset
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            self.perform_create(serializer)
+            return Response({
+                'success': True,
+                'message': 'Review submitted successfully!'
+            })
+        return Response(serializer.errors)
 
 def generate_transaction_id():
     return str(uuid.uuid4())

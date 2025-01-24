@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from rest_framework.exceptions import ValidationError
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -81,3 +82,12 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = '__all__'
+    
+    def create(self, validated_data):
+        user = validated_data.get('user')
+        item = validated_data.get('item')
+        rating = validated_data.get('rating')
+        review = validated_data.get('review')
+        if Review.objects.filter(user=user, item=item).exists():
+            raise ValidationError({'message': 'You have already reviewed this item.'})
+        return Review.objects.create(user=user, item=item, rating=rating, review=review)
