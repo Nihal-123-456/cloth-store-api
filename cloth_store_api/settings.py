@@ -29,7 +29,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "nihalahmed21.pythonanywhere.com", "cloth-store-api-production.up.railway.app", "sslcommerz.com", "sandbox.sslcommerz.com", "cloth-store-api.onrender.com", "nihal-123-456.github.io/Cloth-store-front-end"]
+ALLOWED_HOSTS = ["127.0.0.1", "nihalahmed21.pythonanywhere.com", "cloth-store-api-production.up.railway.app", "sslcommerz.com", "sandbox.sslcommerz.com", "cloth-store-api.onrender.com", "nihal-123-456.github.io"]
 
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:5500',
@@ -41,6 +41,15 @@ CSRF_TRUSTED_ORIGINS = [
     'https://nihalahmed21.pythonanywhere.com',
 ]
 
+
+CORS_ALLOWED_ORIGINS = [
+    "https://nihal-123-456.github.io",
+    'https://nihalahmed21.pythonanywhere.com',
+    'http://127.0.0.1:5500',
+    'https://cloth-store-api.onrender.com',
+    'https://sslcommerz.com',  
+    'https://sandbox.sslcommerz.com',  
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -153,6 +162,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
