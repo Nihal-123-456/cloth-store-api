@@ -29,15 +29,16 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
-CORS_ALLOW_ALL_ORIGINS = True
+ALLOWED_HOSTS = ["127.0.0.1", "nihalahmed21.pythonanywhere.com", "cloth-store-api-production.up.railway.app", "sslcommerz.com", "sandbox.sslcommerz.com", "cloth-store-api.onrender.com", "nihal-123-456.github.io/Cloth-store-front-end"]
+
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:5500',
     'https://cloth-store-api.onrender.com',
     'https://sslcommerz.com',  
     'https://sandbox.sslcommerz.com',  
     'https://nihal-123-456.github.io/Cloth-store-front-end',
-    'https://cloth-store-api-production.up.railway.app'
+    'https://cloth-store-api-production.up.railway.app',
+    'https://nihalahmed21.pythonanywhere.com',
 ]
 
 # Application definition
